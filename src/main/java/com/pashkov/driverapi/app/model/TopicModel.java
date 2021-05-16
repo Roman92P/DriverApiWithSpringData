@@ -1,28 +1,44 @@
 package com.pashkov.driverapi.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
 @AllArgsConstructor
+@ApiModel(description = "Topic entity")
 public class TopicModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private long id;
 
     @Column(unique = true)
+    @ApiModelProperty(notes = "Topic name")
     private String topicDescription;
 
     public TopicModel() {
+    }
+
+    @JsonIgnore
+    public long getId() {
+        return id;
+    }
+
+    @JsonIgnore
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getTopicDescription() {
+        return topicDescription;
+    }
+
+    public void setTopicDescription(String topicDescription) {
+        this.topicDescription = topicDescription;
     }
 
     @Override

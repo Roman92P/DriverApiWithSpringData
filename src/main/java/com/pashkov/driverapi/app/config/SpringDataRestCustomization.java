@@ -3,6 +3,7 @@ package com.pashkov.driverapi.app.config;
 import com.pashkov.driverapi.app.model.TopicModel;
 import com.pashkov.driverapi.app.projection.TopicProjection;
 import com.pashkov.driverapi.app.repository.TopicRepository;
+import org.aopalliance.aop.Advice;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
@@ -25,6 +26,11 @@ public class SpringDataRestCustomization implements RepositoryRestConfigurer {
                     .addProjection(TopicProjection.class);
 
         exposureConfiguration.forDomainType(TopicModel.class).withItemExposure((metadata, httpMethods) ->
-                httpMethods.disable(HttpMethod.PATCH).disable(HttpMethod.OPTIONS).disable(HttpMethod.PUT));
+                httpMethods.disable(HttpMethod.PATCH).disable(HttpMethod.OPTIONS));
+        exposureConfiguration.forDomainType(TopicModel.class).disablePutForCreation();
+
+        exposureConfiguration.forDomainType(Advice.class).withItemExposure((metadata, httpMethods) ->
+                httpMethods.disable(HttpMethod.PATCH).disable(HttpMethod.OPTIONS));
+        exposureConfiguration.forDomainType(Advice.class).disablePutForCreation();
     }
 }
