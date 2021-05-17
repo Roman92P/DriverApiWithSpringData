@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @ApiModel(description = "Topic entity")
-public class TopicModel {
+public class Topic {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,7 +20,7 @@ public class TopicModel {
     @ApiModelProperty(notes = "Topic name")
     private String topicDescription;
 
-    public TopicModel() {
+    public Topic() {
     }
 
     @JsonIgnore
@@ -43,7 +43,7 @@ public class TopicModel {
 
     @Override
     public String toString() {
-        return "TopicModel{" +
+        return "Topic{" +
                 "id=" + id +
                 ", topicDescription='" + topicDescription + '\'' +
                 '}';

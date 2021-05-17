@@ -3,7 +3,7 @@ package com.pashkov.driverapi.app.model;
 import javax.persistence.*;
 
 @Entity
-public class QuestionModel {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,11 +20,11 @@ public class QuestionModel {
     private String score;
 
     @ManyToOne
-    private TopicModel topicModel;
+    private Topic topic;
 
     @Override
     public String toString() {
-        return "QuestionModel{" +
+        return "Question{" +
                 "id=" + id +
                 ", questionContent='" + questionContent + '\'' +
                 ", correctAnswer='" + correctAnswer + '\'' +
@@ -32,7 +32,7 @@ public class QuestionModel {
                 ", possibleAnswerTwo='" + possibleAnswerTwo + '\'' +
                 ", possibleAnswerThree='" + possibleAnswerThree + '\'' +
                 ", score='" + score + '\'' +
-                ", topicModel=" + topicModel +
+                ", topic=" + topic +
                 '}';
     }
 
@@ -92,11 +92,11 @@ public class QuestionModel {
         this.possibleAnswerThree = possibleAnswerThree;
     }
 
-    public TopicModel getTopicModel() {
-        return topicModel;
+    public Topic getTopicModel() {
+        return topic;
     }
 
-    public void setTopicModel(TopicModel topicModel) {
-        this.topicModel = topicModel;
+    public void setTopicModel(Topic topic) {
+        this.topic = topic;
     }
 }

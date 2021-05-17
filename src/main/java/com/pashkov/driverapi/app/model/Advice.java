@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @AllArgsConstructor
 @ApiModel(description = "Driver advice entity")
-public class AdviceModel {
+public class Advice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,9 +24,9 @@ public class AdviceModel {
 
     @ManyToOne
     @ApiModelProperty(notes = "Tag name of Driver Advice")
-    private TopicModel topic;
+    private Topic topic;
 
-    public AdviceModel() {
+    public Advice() {
     }
     public String getAdviceTitle() {
         return adviceTitle;
@@ -53,17 +53,17 @@ public class AdviceModel {
         this.content = description;
     }
 
-    public TopicModel getTopic() {
+    public Topic getTopic() {
         return topic;
     }
 
-    public void setTopic(TopicModel topic) {
+    public void setTopic(Topic topic) {
         this.topic = topic;
     }
 
     @Override
     public String toString() {
-        return "AdviceModel{" +
+        return "Advice{" +
                 "id=" + id +
                 ", adviceTitle='" + adviceTitle + '\'' +
                 ", content='" + content + '\'' +

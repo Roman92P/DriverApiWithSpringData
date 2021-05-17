@@ -1,17 +1,17 @@
 package com.pashkov.driverapi.app.service;
 
-import com.pashkov.driverapi.app.model.TopicModel;
+import com.pashkov.driverapi.app.model.Topic;
 
 import java.util.Optional;
 import java.util.Set;
 
 public interface TopicService {
 
-    Optional<TopicModel> getTopicByName(String TopicName);
+    Optional<Topic> getTopicByName(String TopicName);
 
-    void addNewTopicModel(TopicModel topicModel);
+    void addNewTopicModel(Topic topic);
 
-    void removeTopicModel(TopicModel topicModel);
+    void removeTopicModel(Topic topic);
 
-    Set<TopicModel> getAllTopic();
+    Set<Topic> getAllTopic();
 }
