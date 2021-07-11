@@ -1,9 +1,13 @@
 package com.pashkov.driverapi.app.repository;
 
 import com.pashkov.driverapi.app.model.Question;
+import com.pashkov.driverapi.app.projection.QuestionProjection;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource
+import java.util.Optional;
+
+@RepositoryRestResource(excerptProjection = QuestionProjection.class)
 public interface QuestionRepository extends CrudRepository<Question, Long> {
+    Optional<Question> findByTopic_TopicDescription(String topicName);
 }

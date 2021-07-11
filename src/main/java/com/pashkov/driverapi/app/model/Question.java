@@ -1,18 +1,15 @@
 package com.pashkov.driverapi.app.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
-public class Question {
-
+public class Question implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String questionContent;
-
     private String correctAnswer;
-
     private String possibleAnswerOne;
     private String possibleAnswerTwo;
     private String possibleAnswerThree;

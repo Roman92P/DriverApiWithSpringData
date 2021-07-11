@@ -1,21 +1,25 @@
 package com.pashkov.driverapi.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Set;
 
 @Entity
-public class Training {
+public class Training implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private static final int SCORE_TO_COMPLETE = 3;
+
     private String trainingTitle;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Question> Questions;
+
+    @ManyToOne
+    private Topic topic;
 
     @Override
     public String toString() {
@@ -23,6 +27,7 @@ public class Training {
                 "id=" + id +
                 ", trainingTitle='" + trainingTitle + '\'' +
                 ", Questions=" + Questions +
+                ", topic=" + topic +
                 '}';
     }
 
@@ -48,5 +53,12 @@ public class Training {
 
     public void setQuestions(Set<Question> Questions) {
         this.Questions = Questions;
+    }
+
+    public Topic getTopic() {
+        return topic;
+    }
+    public void setTopic(Topic topic) {
+        this.topic = topic;
     }
 }
