@@ -23,7 +23,7 @@ public class AdviceModel extends RepresentationModel<AdviceModel> {
     private String content;
     private int likes;
     private int shares;
-    private Topic topic;
+    private TopicModel topic;
     private Training training;
 
 }
