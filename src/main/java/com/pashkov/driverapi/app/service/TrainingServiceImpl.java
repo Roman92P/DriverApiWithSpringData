@@ -4,7 +4,8 @@ import com.pashkov.driverapi.app.model.Training;
 import com.pashkov.driverapi.app.repository.TrainingRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @Service
 public class TrainingServiceImpl implements TrainingService {
@@ -18,5 +19,20 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public Set<Training> getAllByTopicTitle(String topicTitle) {
         return trainingRepository.getByTopic_TopicDescription(topicTitle);
+    }
+
+    @Override
+    public List<Training> getAllTrainings() {
+        Iterable<Training> all = trainingRepository.findAll();
+        List<Training> trainings = new ArrayList<>();
+        all.forEach(trainings::add);
+        return trainings;
+    }
+
+    @Override
+    public Optional<Training> getTrainingByTitle(String title) {
+        Optional<Training> trainingByTrainingTitle = trainingRepository.getTrainingByTrainingTitle(title);
+        if (trainingByTrainingTitle.isEmpty()) throw new EntityNotFoundException();
+        return trainingByTrainingTitle;
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,10 +28,18 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @GetMapping(produces = "applicaion/json")
+    @GetMapping(value = "/all",produces = "application/json")
     public ResponseEntity<CollectionModel<TopicModel>> returnAllExistingTopics(){
         Set<Topic> allTopic = topicService.getAllTopic();
         return new ResponseEntity<>(
                 topicRepresentationModelAssembler.toCollectionModel(allTopic), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{title}", produces = "application/json")
+    public ResponseEntity<TopicModel>getTopicRepresentationByTitle(@PathVariable String title){
+        return topicService.getTopicByName(title)
+                .map(topicRepresentationModelAssembler::toModel)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }

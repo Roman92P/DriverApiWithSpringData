@@ -12,4 +12,6 @@ public interface TrainingRepository  extends CrudRepository<Training, Long> {
 
     Set<Training> getByTopic_TopicDescription(String topicDescription);
 
+    Optional<Training> getTrainingByTrainingTitle(String title);
+
 }

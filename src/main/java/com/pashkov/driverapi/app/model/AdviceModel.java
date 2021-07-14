@@ -24,6 +24,6 @@ public class AdviceModel extends RepresentationModel<AdviceModel> {
     private int likes;
     private int shares;
     private TopicModel topic;
-    private Training training;
+    private TrainingModel training;
 
 }
