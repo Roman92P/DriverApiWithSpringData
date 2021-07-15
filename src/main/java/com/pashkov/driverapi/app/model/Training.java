@@ -1,5 +1,7 @@
 package com.pashkov.driverapi.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -21,6 +23,10 @@ public class Training implements Serializable {
     @ManyToOne
     private Topic topic;
 
+    @JsonBackReference
+    @OneToOne(mappedBy = "training")
+    private Advice advice;
+
     @Override
     public String toString() {
         return "Training{" +
@@ -28,7 +34,16 @@ public class Training implements Serializable {
                 ", trainingTitle='" + trainingTitle + '\'' +
                 ", Questions=" + Questions +
                 ", topic=" + topic +
+                ", advice=" + advice +
                 '}';
+    }
+
+    public Advice getAdvice() {
+        return advice;
+    }
+
+    public void setAdvice(Advice advice) {
+        this.advice = advice;
     }
 
     public Long getId() {

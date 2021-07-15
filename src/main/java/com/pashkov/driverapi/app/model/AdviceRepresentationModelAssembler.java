@@ -2,14 +2,27 @@ package com.pashkov.driverapi.app.model;
 
 import com.pashkov.driverapi.app.resource.AdviceController;
 import com.pashkov.driverapi.app.resource.TopicController;
+import com.pashkov.driverapi.app.util.QuestionSetToModelListUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 @Component
 public class AdviceRepresentationModelAssembler extends RepresentationModelAssemblerSupport<Advice, AdviceModel> {
+
+    @Autowired
+    private QuestionSetToModelListUtil questionSetToModelListUtil;
+
+    @Autowired
+    private QuestionRepresentationModelAssembler questionRepresentationModelAssembler;
 
     public AdviceRepresentationModelAssembler() {
         super(AdviceController.class, AdviceModel.class);
@@ -35,20 +48,27 @@ public class AdviceRepresentationModelAssembler extends RepresentationModelAssem
     }
 
     private TrainingModel trainingToModel(Training training) {
-        if(training==null){
+        if (training == null) {
             return new TrainingModel();
         }
-        return TrainingModel.builder().trainingTitle(training.getTrainingTitle()).build();
+        return TrainingModel.builder()
+                .trainingTitle(training.getTrainingTitle())
+                .questionModels(questionSetToModelListUtil.convertQuestionCollectionToQustionModels(training.getQuestions()))
+                .build();
     }
-
     private TopicModel topicToModel(Topic topic) {
-        if(topic == null){
+        if (topic == null) {
             return new TopicModel();
         }
         return TopicModel.builder()
                 .topicDescription(topic.getTopicDescription())
                 .build()
-                .add(linkTo(methodOn(TopicController.class).getTopicRepresentationByTitle(topic.getTopicDescription())).withSelfRel());
+                .add(linkTo(methodOn(TopicController.class)
+                                .getTopicRepresentationByTitle(topic.getTopicDescription()))
+                                .withRel("Topic by topic title"),
+                        linkTo(methodOn(TopicController.class)
+                                .returnAllExistingTopics())
+                                .withRel("All topics"));
 
     }
 
@@ -58,6 +78,6 @@ public class AdviceRepresentationModelAssembler extends RepresentationModelAssem
         CollectionModel<AdviceModel> adviceModels = super.toCollectionModel(entities);
         adviceModels.add(
                 linkTo(methodOn(AdviceController.class).getAllAdvices()).withSelfRel());
-        return  adviceModels;
+        return adviceModels;
     }
 }

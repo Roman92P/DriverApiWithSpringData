@@ -8,7 +8,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Optional;
 
-@RepositoryRestResource
+@RepositoryRestResource(exported = false)
 public interface AdviceRepository extends CrudRepository<Advice,Long> {
 
     Optional<Advice> findAdviceByAdviceTitle(String title);

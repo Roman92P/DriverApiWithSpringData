@@ -4,7 +4,7 @@ import com.pashkov.driverapi.app.model.Role;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource
+@RepositoryRestResource(exported = false)
 public interface RoleRepository extends CrudRepository<Role, Long> {
     Role findRoleByName(String role_user);
 }

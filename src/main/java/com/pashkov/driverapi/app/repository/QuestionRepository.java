@@ -7,7 +7,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import java.util.Optional;
 
-@RepositoryRestResource(excerptProjection = QuestionProjection.class)
+@RepositoryRestResource(excerptProjection = QuestionProjection.class, exported = false)
 public interface QuestionRepository extends CrudRepository<Question, Long> {
     Optional<Question> findByTopic_TopicDescription(String topicName);
 }

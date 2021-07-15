@@ -1,7 +1,6 @@
 package com.pashkov.driverapi.app.resource;
 
-import com.pashkov.driverapi.app.model.Advice;
-import com.pashkov.driverapi.app.model.Topic;
+import com.pashkov.driverapi.app.model.*;
 import com.pashkov.driverapi.app.service.AdviceService;
 import com.pashkov.driverapi.app.service.TopicService;
 import com.pashkov.driverapi.app.service.TrainingService;
@@ -9,20 +8,22 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @Api(description = "Resource for Home page. Returns one Advice, list of all topics, not completed advice with training")
@@ -36,6 +37,12 @@ public class HomeResource {
     private final AdviceService adviceService;
 
     private final TrainingService trainingService;
+
+    @Autowired
+    TopicRepresentationModelAssembler topicRepresentationModelAssembler;
+
+    @Autowired
+    AdviceRepresentationModelAssembler adviceRepresentationModelAssembler;
 
 
     public HomeResource(TopicService topicService, AdviceService adviceService, TrainingService trainingService) {
@@ -52,38 +59,20 @@ public class HomeResource {
 
     //@ApiIgnore
     @GetMapping(value = "/incompleteAdviceWithTraining", produces = "application/json")
-    public CollectionModel<EntityModel<Advice>> getIncompletedAdviceWithTraining() {
-        List<EntityModel<Advice>> list = adviceService.getAll()
-                .stream().map(advice ->
-                        EntityModel.of(advice,
-                                linkTo(methodOn(HomeResource.class)
-                                        .getIncompletedAdviceWithTraining())
-                                        .withRel("Incomplete advices"),
-                                linkTo(methodOn(AdviceController.class)
-                                        .getAdviceWithTitle(advice.getAdviceTitle()))
-                                        .withRel("Advice by title"),
-                                linkTo(methodOn(AdviceController.class).getAllAdvices())
-                                        .withRel("All advices")))
-                .collect(Collectors.toList());
-
-
-        return CollectionModel.of(list,
+    public CollectionModel<AdviceModel> getIncompletedAdviceWithTraining() {
+        List<Advice> list = adviceService.getAll();
+        return CollectionModel.of(adviceRepresentationModelAssembler.toCollectionModel(list),
                 linkTo(methodOn(HomeResource.class)
                         .getIncompletedAdviceWithTraining())
                         .withSelfRel());
     }
 
-
-    @GetMapping(value = "/getAdviceByTitle", produces = "application/json")
-    private EntityModel<Advice> getAdvice(@RequestParam(name = "id") Long id) {
-        Optional<Advice> advice = adviceService.getAdviceById(id);
-        return EntityModel.of(advice.get());
-    }
-
-    @ApiIgnore
+    //@ApiIgnore
     @GetMapping(value = "/topics", produces = "application/json")
-    public Set<Topic> getAllTopics() {
-        return topicService.getAllTopic();
+    public Set<TopicModel> getAllTopics() {
+        return topicService.getAllTopic().stream()
+                .map(topicRepresentationModelAssembler::toModel)
+                .collect(Collectors.toSet());
     }
 
     @ApiOperation(value = "Get home page with random advice")

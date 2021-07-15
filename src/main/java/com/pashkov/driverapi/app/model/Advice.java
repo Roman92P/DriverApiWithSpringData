@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,8 @@ public class Advice implements Serializable {
     @ApiModelProperty(notes = "Driver advice content")
     private String content;
 
+    //@JsonBackReference and @JsonManagedReference to avoid stackoverflow recurcion advice->training and again and again
+    @JsonManagedReference
     @OneToOne(fetch = FetchType.EAGER)
     private Training training;
 
@@ -74,7 +77,7 @@ public class Advice implements Serializable {
     public void setAdviceTitle(String adviceTitle) {
         this.adviceTitle = adviceTitle;
     }
-//    @JsonIgnore
+    @JsonIgnore
     public Long getId() {
         return id;
     }

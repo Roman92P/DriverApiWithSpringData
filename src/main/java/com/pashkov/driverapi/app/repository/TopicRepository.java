@@ -9,7 +9,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.Optional;
 
-@RepositoryRestResource(collectionResourceRel = "topics", path = "topics")
+@RepositoryRestResource(collectionResourceRel = "topics", path = "topics", exported = false)
 public interface TopicRepository extends CrudRepository<Topic, Long> {
 
      Optional<Topic> findByTopicDescription(@Param("topicDescription")String topicDescription);
