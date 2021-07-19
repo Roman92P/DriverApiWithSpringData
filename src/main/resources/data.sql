@@ -51,3 +51,4 @@ INSERT INTO user_role(user_id, role_id) VALUES ('2','1');
 INSERT INTO user_role(user_id, role_id) VALUES ('2','2');
 UPDATE advice SET training_id ='1'WHERE id ='1';
 UPDATE advice SET training_id ='2'WHERE id ='2';
+INSERT INTO forum_question(id, ask_time, text, user_id) VALUES ('1',"Sat Jul 17 23:02:29 CEST 2021",'Pytanie?','1');

@@ -3,16 +3,19 @@ package com.pashkov.driverapi.app.config;
 import com.pashkov.driverapi.app.model.Question;
 import com.pashkov.driverapi.app.model.Topic;
 import com.pashkov.driverapi.app.model.Training;
+import com.pashkov.driverapi.app.projection.ForumQuestionProjection;
 import com.pashkov.driverapi.app.projection.TopicProjection;
+import com.pashkov.driverapi.app.projection.UserProjection;
 import com.pashkov.driverapi.app.repository.TopicRepository;
 import org.aopalliance.aop.Advice;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.core.config.RepositoryRestConfiguration;
 import org.springframework.data.rest.core.mapping.ExposureConfiguration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestConfigurer;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 public class SpringDataRestCustomization implements RepositoryRestConfigurer {
     @Override
     public void configureRepositoryRestConfiguration(RepositoryRestConfiguration config) {
@@ -20,12 +23,14 @@ public class SpringDataRestCustomization implements RepositoryRestConfigurer {
         ExposureConfiguration exposureConfiguration = config.getExposureConfiguration();
 
         config.withEntityLookup()
-                    .forRepository(TopicRepository.class)
-                    .withIdMapping(Topic::getTopicDescription)
-                    .withLookup(TopicRepository::findByTopicDescription);
+                .forRepository(TopicRepository.class)
+                .withIdMapping(Topic::getTopicDescription)
+                .withLookup(TopicRepository::findByTopicDescription);
 
         config.getProjectionConfiguration()
-                    .addProjection(TopicProjection.class);
+                .addProjection(TopicProjection.class)
+                .addProjection(ForumQuestionProjection.class)
+                .addProjection(UserProjection.class);
 
         exposureConfiguration.forDomainType(Topic.class).withItemExposure((metadata, httpMethods) ->
                 httpMethods.disable(HttpMethod.PATCH).disable(HttpMethod.OPTIONS));

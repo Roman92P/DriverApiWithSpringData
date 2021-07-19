@@ -1,11 +1,11 @@
 package com.pashkov.driverapi.app.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import com.pashkov.driverapi.app.config.LoginCredentials;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
 public class LoginController {
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
-    public String login() {
-        return "admin/login";
+    @PostMapping(path = "/login")
+    public void login(@RequestBody LoginCredentials loginCredentials) {
     }
 }

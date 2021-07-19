@@ -13,12 +13,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -77,9 +74,9 @@ public class HomeResource {
 
     @ApiOperation(value = "Get home page with random advice")
     @GetMapping(produces = "application/hal+json")
-    public EntityModel getRandomAdvice() {
+    public EntityModel<AdviceModel> getRandomAdvice() {
         Advice randomAdvice = adviceService.getRandomAdvice();
-        return EntityModel.of(randomAdvice
+        return EntityModel.of(adviceRepresentationModelAssembler.toModel(randomAdvice)
                 , linkTo(methodOn(HomeResource.class).getRandomAdvice()).withSelfRel()
                 , linkTo(methodOn(HomeResource.class).getAllTopics()).withRel("All topics")
                 , linkTo(methodOn(HomeResource.class).getIncompletedAdviceWithTraining()).withRel("Incomplete Advices with trainings"));

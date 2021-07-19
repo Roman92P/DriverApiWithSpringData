@@ -32,19 +32,6 @@ public class User implements Serializable {
     @ManyToMany
     private Set<Training> completeTrainings;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", enabled=" + enabled +
-                ", roles=" + roles +
-                ", likedAdvices=" + likedAdvices +
-                ", sharedAdvices=" + sharedAdvices +
-                ", completeTrainings=" + completeTrainings +
-                '}';
-    }
 
     public boolean isEnabled() {
         return enabled;
