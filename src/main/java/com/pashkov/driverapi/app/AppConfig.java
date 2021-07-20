@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app;
 
 import com.pashkov.driverapi.app.config.SpringDataRestCustomization;
+import com.pashkov.driverapi.app.model.CurrentUser;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
