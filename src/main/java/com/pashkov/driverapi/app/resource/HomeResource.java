@@ -48,38 +48,13 @@ public class HomeResource {
         this.trainingService = trainingService;
     }
 
-//    @GetMapping("/admin")
-//    @ResponseBody
-//    public String admin2(@AuthenticationPrincipal UserDetails customUser) {
-//        return "this is user " + customUser;
-//    }
-
-    //@ApiIgnore
-    @GetMapping(value = "/incompleteAdviceWithTraining", produces = "application/json")
-    public CollectionModel<AdviceModel> getIncompletedAdviceWithTraining() {
-        List<Advice> list = adviceService.getAll();
-        return CollectionModel.of(adviceRepresentationModelAssembler.toCollectionModel(list),
-                linkTo(methodOn(HomeResource.class)
-                        .getIncompletedAdviceWithTraining())
-                        .withSelfRel());
-    }
-
-    //@ApiIgnore
-    @GetMapping(value = "/topics", produces = "application/json")
-    public Set<TopicModel> getAllTopics() {
-        return topicService.getAllTopic().stream()
-                .map(topicRepresentationModelAssembler::toModel)
-                .collect(Collectors.toSet());
-    }
-
     @ApiOperation(value = "Get home page with random advice")
     @GetMapping(produces = "application/hal+json")
     public EntityModel<AdviceModel> getRandomAdvice() {
         Advice randomAdvice = adviceService.getRandomAdvice();
         return EntityModel.of(adviceRepresentationModelAssembler.toModel(randomAdvice)
                 , linkTo(methodOn(HomeResource.class).getRandomAdvice()).withSelfRel()
-                , linkTo(methodOn(HomeResource.class).getAllTopics()).withRel("All topics")
-                , linkTo(methodOn(HomeResource.class).getIncompletedAdviceWithTraining()).withRel("Incomplete Advices with trainings"));
+                , linkTo(methodOn(AdviceController.class).getIncompletedAdviceWithTraining()).withRel("incompleteAdvicesWithTraining"));
     }
 
 

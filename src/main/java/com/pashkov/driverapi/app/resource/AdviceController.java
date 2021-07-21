@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 
 @RestController
 @RequestMapping(value = "/advice")
@@ -42,5 +45,14 @@ public class AdviceController {
         List<Advice> all = adviceService.getAll();
         return new ResponseEntity<>(
                 adviceRepresentationModelAssembler.toCollectionModel(all), HttpStatus.OK);
+    }
+    //@ApiIgnore
+    @GetMapping(value = "/incompleteAdviceWithTraining", produces = "application/json")
+    public CollectionModel<AdviceModel> getIncompletedAdviceWithTraining() {
+        List<Advice> list = adviceService.getAll();
+        return CollectionModel.of(adviceRepresentationModelAssembler.toCollectionModel(list),
+                linkTo(methodOn(AdviceController.class)
+                        .getIncompletedAdviceWithTraining())
+                        .withSelfRel());
     }
 }

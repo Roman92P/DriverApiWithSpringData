@@ -37,7 +37,7 @@ public class ForumQuestionController {
         this.userDetail = userDetail;
 
     }
-    @PostMapping(produces = "application/json")
+    @PostMapping(consumes="application/json" ,produces = "application/json")
     public ResponseEntity<ForumQuestionModel> userSendForumQuestion
             (@RequestParam ForumQuestionModel forumQuestionModel,
              Authentication authentication){
@@ -57,7 +57,7 @@ public class ForumQuestionController {
                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping(path="{id}",produces = "application/json")
+    @PutMapping(path="{id}",consumes = "application/json",produces = "application/json")
     public ResponseEntity<ForumQuestionModel> editForumQuestion(@RequestParam ForumQuestionModel forumQuestionModel,
                                                                 @PathVariable long id){
         Optional<ForumQuestion> forumQuestionByid = forumQuestionService.getForumQuestionByid(id);

@@ -28,7 +28,7 @@ public class TopicController {
         this.topicService = topicService;
     }
 
-    @GetMapping(value = "/all",produces = "application/json")
+    @GetMapping(produces = "application/json")
     public ResponseEntity<CollectionModel<TopicModel>> returnAllExistingTopics(){
         Set<Topic> allTopic = topicService.getAllTopic();
         return new ResponseEntity<>(

@@ -42,4 +42,5 @@ public class TrainingController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
 }
