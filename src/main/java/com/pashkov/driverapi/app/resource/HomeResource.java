@@ -1,6 +1,8 @@
 package com.pashkov.driverapi.app.resource;
 
-import com.pashkov.driverapi.app.model.*;
+import com.pashkov.driverapi.app.model.AdviceModel;
+import com.pashkov.driverapi.app.model.AdviceRepresentationModelAssembler;
+import com.pashkov.driverapi.app.model.TopicRepresentationModelAssembler;
 import com.pashkov.driverapi.app.service.AdviceService;
 import com.pashkov.driverapi.app.service.TopicService;
 import com.pashkov.driverapi.app.service.TrainingService;
@@ -9,15 +11,10 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -50,11 +47,17 @@ public class HomeResource {
 
     @ApiOperation(value = "Get home page with random advice")
     @GetMapping(produces = "application/hal+json")
-    public EntityModel<AdviceModel> getRandomAdvice() {
-        Advice randomAdvice = adviceService.getRandomAdvice();
-        return EntityModel.of(adviceRepresentationModelAssembler.toModel(randomAdvice)
-                , linkTo(methodOn(HomeResource.class).getRandomAdvice()).withSelfRel()
-                , linkTo(methodOn(AdviceController.class).getIncompletedAdviceWithTraining()).withRel("incompleteAdvicesWithTraining"));
+    public ResponseEntity<AdviceModel> getRandomAdvice() {
+        return adviceService.getRandomAdvice().map(
+                adviceRepresentationModelAssembler::toModel)
+                .map(adviceModel -> adviceModel
+                        .add(
+                                linkTo(methodOn(AdviceController.class)
+                                        .getIncompletedAdviceWithTraining())
+                                        .withRel("incompleteAdvicesWithTraining"),
+                                linkTo(methodOn(HomeResource.class).getRandomAdvice()).withSelfRel()))
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 

@@ -24,11 +24,11 @@ public class AdviceServiceImpl implements AdviceService {
     }
 
     @Override
-    public Advice getRandomAdvice() {
+    public Optional<Advice> getRandomAdvice() {
         long count = adviceRepository.count();
         Random random = new Random();
         int i = random.nextInt((int) count)+1;
-        return getAdviceById((long) i).get();
+        return getAdviceById((long) i);
     }
 
     @Override

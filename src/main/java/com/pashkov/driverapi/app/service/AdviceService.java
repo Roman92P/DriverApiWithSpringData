@@ -10,7 +10,7 @@ public interface AdviceService {
 
     Optional<Advice> getAdviceById(Long id);
 
-    Advice getRandomAdvice();
+    Optional<Advice> getRandomAdvice();
 
     List<Advice> getAll();
 

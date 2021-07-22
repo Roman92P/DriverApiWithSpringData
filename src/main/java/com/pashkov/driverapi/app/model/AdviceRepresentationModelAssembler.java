@@ -2,6 +2,7 @@ package com.pashkov.driverapi.app.model;
 
 import com.pashkov.driverapi.app.resource.AdviceController;
 import com.pashkov.driverapi.app.resource.TopicController;
+import com.pashkov.driverapi.app.resource.TrainingController;
 import com.pashkov.driverapi.app.util.QuestionSetToModelListUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
@@ -50,8 +51,13 @@ public class AdviceRepresentationModelAssembler extends RepresentationModelAssem
         return TrainingModel.builder()
                 .trainingTitle(training.getTrainingTitle())
                 .questionModels(questionSetToModelListUtil.convertQuestionCollectionToQustionModels(training.getQuestions()))
-                .build();
+                .build()
+                .add(linkTo(methodOn(TrainingController.class).getTrainingByTitle(training.getTrainingTitle()))
+                        .withRel("trainingByName"))
+                .add(linkTo(methodOn(TrainingController.class).getAllTrainingsModel())
+                        .withRel("getAlltrainings"));
     }
+
     private TopicModel topicToModel(Topic topic) {
         if (topic == null) {
             return new TopicModel();
