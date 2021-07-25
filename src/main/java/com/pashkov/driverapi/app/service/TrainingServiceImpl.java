@@ -35,4 +35,9 @@ public class TrainingServiceImpl implements TrainingService {
         if (trainingByTrainingTitle.isEmpty()) throw new EntityNotFoundException();
         return trainingByTrainingTitle;
     }
+
+    @Override
+    public Set<Training> completeUserTrainings(long userId) {
+        return trainingRepository.getUserCompleteTrainings(userId);
+    }
 }

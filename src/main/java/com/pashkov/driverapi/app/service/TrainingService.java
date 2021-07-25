@@ -13,4 +13,6 @@ public interface TrainingService {
     List<Training> getAllTrainings();
 
     Optional<Training> getTrainingByTitle(String title);
+
+    Set<Training> completeUserTrainings(long userId);
 }

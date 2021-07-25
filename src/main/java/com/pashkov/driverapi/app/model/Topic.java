@@ -49,4 +49,5 @@ public class Topic implements Serializable {
                 ", topicDescription='" + topicDescription + '\'' +
                 '}';
     }
+
 }

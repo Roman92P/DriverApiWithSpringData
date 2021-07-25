@@ -76,4 +76,22 @@ public class Training implements Serializable {
     public void setTopic(Topic topic) {
         this.topic = topic;
     }
+
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        final Training other = (Training) obj;
+        if ((this.getTrainingTitle() == null) ? (other.getTrainingTitle() != null) : !this.getTrainingTitle().equals(other.getTrainingTitle())) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -3,6 +3,7 @@ package com.pashkov.driverapi.app.model;
 import com.pashkov.driverapi.app.resource.AdviceController;
 import com.pashkov.driverapi.app.resource.TopicController;
 import com.pashkov.driverapi.app.resource.TrainingController;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.server.mvc.RepresentationModelAssemblerSupport;
 import org.springframework.stereotype.Component;
 
@@ -31,11 +32,13 @@ public class TrainingRepresentationModelAssembler extends RepresentationModelAss
                 linkTo(methodOn(TrainingController.class).getAllTrainingsModel()).withRel("All trainings"),
                 linkTo(methodOn(TrainingController.class).getTrainingByTitle(entity.getTrainingTitle())).withRel("Training by training title"),
                 linkTo(methodOn(TopicController.class).getTopicRepresentationByTitle(entity.getTopic().getTopicDescription()))
-                        .withRel("Training topic"),
-                linkTo(methodOn(AdviceController.class).getAdviceWithTitle(entity.getAdvice().getAdviceTitle())).withRel("Training advice")
-        );
+                        .withRel("Training topic"));
         Set<Question> questions = entity.getQuestions();
         trainingModel.setQuestionModels(questionsToModel(questions));
+        if(entity.getAdvice() != null){
+            trainingModel.add(
+                    linkTo(methodOn(AdviceController.class).getAdviceWithTitle(entity.getAdvice().getAdviceTitle())).withRel("Training advice"));
+        }
         return trainingModel;
     }
 
@@ -49,5 +52,13 @@ public class TrainingRepresentationModelAssembler extends RepresentationModelAss
                         .possibleAnswerThree(question.getPossibleAnswerThree())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public CollectionModel<TrainingModel> toCollectionModel(Iterable<? extends Training> entities) {
+        CollectionModel<TrainingModel> trainingModelsModels = super.toCollectionModel(entities);
+        trainingModelsModels.add(
+                linkTo(methodOn(TrainingController.class).getAllTrainingsModel()).withSelfRel());
+        return trainingModelsModels;
     }
 }
