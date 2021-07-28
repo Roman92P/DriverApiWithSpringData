@@ -54,7 +54,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/webjars/**",
                         "/swagger-ui/**",
                         "/login").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
+                //.anyRequest().authenticated()
                 .and()
                 //make session stateless
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)

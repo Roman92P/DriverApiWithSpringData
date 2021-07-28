@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface QuestionService {
 
     Optional<Question> getQuestionByTopicName(String topicName);
+
 }

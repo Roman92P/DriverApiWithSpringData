@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app.service;
 
 import com.pashkov.driverapi.app.model.Training;
+import com.pashkov.driverapi.app.model.User;
 import com.pashkov.driverapi.app.repository.TrainingRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,5 +40,10 @@ public class TrainingServiceImpl implements TrainingService {
     @Override
     public Set<Training> completeUserTrainings(long userId) {
         return trainingRepository.getUserCompleteTrainings(userId);
+    }
+
+    @Override
+    public Set<Training> getIncompleatedUser(User byUserName) {
+        return null;
     }
 }

@@ -4,14 +4,14 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
 
-@Entity(name = "users")
+@Entity
 public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, name = "username")
+    @Column(nullable = false, name = "username")
     private String username;
 
     private String password;
@@ -32,6 +32,41 @@ public class User implements Serializable {
     @ManyToMany
     private Set<Training> completeTrainings;
 
+    private int userScore;
+
+    private String userNick;
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", enabled=" + enabled +
+                ", roles=" + roles +
+                ", likedAdvices=" + likedAdvices +
+                ", sharedAdvices=" + sharedAdvices +
+                ", completeTrainings=" + completeTrainings +
+                ", userScore=" + userScore +
+                ", userNick='" + userNick + '\'' +
+                '}';
+    }
+
+    public int getUserScore() {
+        return userScore;
+    }
+
+    public void setUserScore(int userScore) {
+        this.userScore = userScore;
+    }
+
+    public String getUserNick() {
+        return userNick;
+    }
+
+    public void setUserNick(String userNick) {
+        this.userNick = userNick;
+    }
 
     public boolean isEnabled() {
         return enabled;

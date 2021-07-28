@@ -5,7 +5,7 @@ import com.pashkov.driverapi.app.projection.UserProjection;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
-@RepositoryRestResource(excerptProjection = UserProjection.class)
+@RepositoryRestResource(excerptProjection = UserProjection.class, exported = false)
 public interface UserRepository extends CrudRepository<User, Long> {
     User findByUsername(String name);
 }

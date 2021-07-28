@@ -17,7 +17,7 @@ public class Topic implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true)
+
     @ApiModelProperty(notes = "Topic name")
     private String topicDescription;
 
