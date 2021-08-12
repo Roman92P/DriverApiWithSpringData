@@ -29,10 +29,10 @@ public class TrainingRepresentationModelAssembler extends RepresentationModelAss
         TrainingModel trainingModel = instantiateModel(entity);
         trainingModel.setTrainingTitle(entity.getTrainingTitle());
         trainingModel.add(
-                linkTo(methodOn(TrainingController.class).getAllTrainingsModel()).withRel("All trainings"),
-                linkTo(methodOn(TrainingController.class).getTrainingByTitle(entity.getTrainingTitle())).withRel("Training by training title"),
-                linkTo(methodOn(TopicController.class).getTopicRepresentationByTitle(entity.getTopic().getTopicDescription()))
-                        .withRel("Training topic"));
+                linkTo(methodOn(TrainingController.class).getAllTrainingsModel()).withRel("allTrainings"),
+                linkTo(methodOn(TrainingController.class).getTrainingByTitle(entity.getTrainingTitle())).withRel("trainingByTrainingTitle"),
+                linkTo(methodOn(TrainingController.class).getTrainingAdvice(entity.getId())).withRel("trainingAdvice"),
+                linkTo(methodOn(TrainingController.class).getTrainingTopic(entity.getId())).withRel("trainingTopic"));
         Set<Question> questions = entity.getQuestions();
         trainingModel.setQuestionModels(questionsToModel(questions));
         if(entity.getAdvice() != null){

@@ -40,4 +40,9 @@ public class TopicServiceImpl implements TopicService{
         Set<Topic> collect = StreamSupport.stream(all.spliterator(), false).collect(Collectors.toSet());
         return collect;
     }
+
+    @Override
+    public Optional<Topic> getTopicById(Long id) {
+        return topicRepository.findById(id);
+    }
 }

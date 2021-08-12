@@ -19,4 +19,9 @@ public class QuestionServiceImpl implements QuestionService{
     public Optional<Question> getQuestionByTopicName(String topicName) {
         return questionRepository.findByTopic_TopicDescription(topicName);
     }
+
+    @Override
+    public Optional<Question> getQuestionById(long id) {
+        return questionRepository.findById(id);
+    }
 }

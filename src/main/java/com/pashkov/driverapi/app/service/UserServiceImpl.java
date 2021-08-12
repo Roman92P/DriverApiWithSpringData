@@ -1,5 +1,6 @@
 package com.pashkov.driverapi.app.service;
 
+import com.pashkov.driverapi.app.model.Advice;
 import com.pashkov.driverapi.app.model.Role;
 import com.pashkov.driverapi.app.model.User;
 import com.pashkov.driverapi.app.repository.RoleRepository;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -35,5 +38,15 @@ public class UserServiceImpl implements UserService{
         Role userRole = roleRepository.findRoleByName("ROLE_USER");
         user.setRoles(new HashSet<Role>(Collections.singletonList(userRole)));
         userRepository.save(user);
+    }
+
+    @Override
+    public Optional<User> findUserByid(long id) {
+        return userRepository.findById(id);
+    }
+
+    @Override
+    public Optional<User> getLikedAdvices(long id) {
+        return userRepository.getUserByIdAndLikedAdvices(id);
     }
 }

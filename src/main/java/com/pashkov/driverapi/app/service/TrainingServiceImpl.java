@@ -46,4 +46,9 @@ public class TrainingServiceImpl implements TrainingService {
     public Set<Training> getIncompleatedUser(User byUserName) {
         return null;
     }
+
+    @Override
+    public Optional<Training> getTrainingById(long id) {
+        return trainingRepository.findById(id);
+    }
 }

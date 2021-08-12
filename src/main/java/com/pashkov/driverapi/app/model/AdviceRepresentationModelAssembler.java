@@ -41,6 +41,10 @@ public class AdviceRepresentationModelAssembler extends RepresentationModelAssem
         Training training = entity.getTraining();
         TrainingModel trainingModel = trainingToModel(training);
         adviceModel.setTraining(trainingModel);
+        adviceModel.add(
+                linkTo(methodOn(AdviceController.class).getAdviceTraining(entity.getId())).withRel("adviceTraining"),
+                linkTo(methodOn(AdviceController.class).getAdviceTopic(entity.getId())).withRel("adviceTopic")
+        );
         return adviceModel;
     }
 

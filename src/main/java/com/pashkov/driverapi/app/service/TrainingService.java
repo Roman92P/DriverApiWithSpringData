@@ -18,4 +18,6 @@ public interface TrainingService {
     Set<Training> completeUserTrainings(long userId);
 
     Set<Training> getIncompleatedUser(User byUserName);
+
+    Optional<Training> getTrainingById(long id);
 }

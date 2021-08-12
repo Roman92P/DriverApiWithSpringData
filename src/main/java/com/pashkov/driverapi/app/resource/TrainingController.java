@@ -1,11 +1,12 @@
 package com.pashkov.driverapi.app.resource;
 
-import com.pashkov.driverapi.app.model.Training;
-import com.pashkov.driverapi.app.model.TrainingModel;
-import com.pashkov.driverapi.app.model.TrainingRepresentationModelAssembler;
+import com.pashkov.driverapi.app.model.*;
+import com.pashkov.driverapi.app.service.AdviceService;
+import com.pashkov.driverapi.app.service.TopicService;
 import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @RestController
@@ -25,12 +27,22 @@ public class TrainingController {
     private TrainingUtil trainingUtil;
 
     private final TrainingService trainingService;
+    private final TopicService topicService;
+    private final AdviceService adviceService;
 
     @Autowired
     private TrainingRepresentationModelAssembler trainingRepresentationModelAssembler;
 
-    public TrainingController(TrainingService trainingService) {
+    @Autowired
+    private TopicRepresentationModelAssembler topicRepresentationModelAssembler;
+
+    @Autowired
+    private AdviceRepresentationModelAssembler adviceRepresentationModelAssembler;
+
+    public TrainingController(TrainingService trainingService, TopicService topicService, AdviceService adviceService) {
         this.trainingService = trainingService;
+        this.topicService = topicService;
+        this.adviceService = adviceService;
     }
 
     @GetMapping(produces = "application/json")
@@ -62,6 +74,28 @@ public class TrainingController {
         Set<Training> notCompletedTrainings = trainingUtil.findNotCompletedTrainings(trainings, allTrainings);
         return new ResponseEntity(
                 trainingRepresentationModelAssembler.toCollectionModel(notCompletedTrainings), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{id}/topic", produces = "application/json")
+    public ResponseEntity<TopicModel> getTrainingTopic(@PathVariable long id){
+        Optional<Training> trainingById = trainingService.getTrainingById(id);
+        if(trainingById.isEmpty()){
+            throw new ResourceNotFoundException();
+        }
+        Topic topic = trainingById.get().getTopic();
+        return new ResponseEntity<>(
+                topicRepresentationModelAssembler.toModel(topic),HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{id}/advice", produces = "application/json")
+    public ResponseEntity<AdviceModel> getTrainingAdvice(@PathVariable long id){
+        Optional<Training> trainingById = trainingService.getTrainingById(id);
+        if(trainingById.isEmpty()){
+            throw new ResourceNotFoundException();
+        }
+        Advice advice = trainingById.get().getAdvice();
+        return new ResponseEntity<>(adviceRepresentationModelAssembler.toModel(advice),
+                HttpStatus.OK);
     }
 
 }

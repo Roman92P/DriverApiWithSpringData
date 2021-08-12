@@ -18,6 +18,7 @@ public class CurrentUser extends User {
         this.user = user;
     }
 
+
     public com.pashkov.driverapi.app.model.User getUser() {
         return user;
     }

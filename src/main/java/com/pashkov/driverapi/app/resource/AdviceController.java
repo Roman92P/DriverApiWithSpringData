@@ -1,23 +1,19 @@
 package com.pashkov.driverapi.app.resource;
 
-import com.pashkov.driverapi.app.model.Advice;
-import com.pashkov.driverapi.app.model.AdviceModel;
-import com.pashkov.driverapi.app.model.AdviceRepresentationModelAssembler;
-import com.pashkov.driverapi.app.model.Training;
+import com.pashkov.driverapi.app.model.*;
 import com.pashkov.driverapi.app.service.AdviceService;
+import com.pashkov.driverapi.app.service.TopicService;
 import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.service.UserService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -34,16 +30,24 @@ public class AdviceController {
     @Autowired
     private AdviceRepresentationModelAssembler adviceRepresentationModelAssembler;
 
+    @Autowired
+    private TrainingRepresentationModelAssembler trainingRepresentationModelAssembler;
+
+    @Autowired
+    private TopicRepresentationModelAssembler topicRepresentationModelAssembler;
+
     private final AdviceService adviceService;
     private final TrainingService trainingService;
     private final UserService userService;
     private final TrainingUtil trainingUtil;
+    private final TopicService topicService;
 
-    public AdviceController(AdviceService adviceService, TrainingService trainingService, UserService userService, TrainingUtil trainingUtil) {
+    public AdviceController(AdviceService adviceService, TrainingService trainingService, UserService userService, TrainingUtil trainingUtil, TopicService topicService) {
         this.adviceService = adviceService;
         this.trainingService = trainingService;
         this.userService = userService;
         this.trainingUtil = trainingUtil;
+        this.topicService = topicService;
     }
 
     @GetMapping(path = "/{title}", produces = "application/json")
@@ -85,11 +89,28 @@ public class AdviceController {
         return adviceService.getRandomAdvice().map(
                 adviceRepresentationModelAssembler::toModel)
                 .map(adviceModel -> adviceModel
-                        .add(linkTo(methodOn(AdviceController.class).getRandomAdvice(authentication)).withSelfRel(),
+                        .add(
+                                linkTo(methodOn(AdviceController.class).getRandomAdvice(authentication)).withSelfRel(),
                                 linkTo(methodOn(AdviceController.class).getUserIncompletedAdvices(authentication))
                                         .withRel("userIncompleteAdvices")))
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping(path = "/{id}/training", produces = "application/json")
+    public ResponseEntity<TrainingModel> getAdviceTraining(@PathVariable long id){
+        Advice advice = adviceService.getAdviceById(id).orElseThrow(ResourceNotFoundException::new);
+        Training training = advice.getTraining();
+        return new ResponseEntity<>(
+                trainingRepresentationModelAssembler.toModel(training),HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/{id}/topic", produces="application/json")
+    public ResponseEntity<TopicModel> getAdviceTopic(@PathVariable long id){
+       return topicService.getTopicById(id)
+               .map(topicRepresentationModelAssembler::toModel)
+               .map(ResponseEntity::ok)
+               .orElse(ResponseEntity.notFound().build());
     }
 
 }

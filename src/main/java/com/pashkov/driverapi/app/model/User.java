@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app.model;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.Set;
 
@@ -32,8 +33,11 @@ public class User implements Serializable {
     @ManyToMany
     private Set<Training> completeTrainings;
 
+    @Column(nullable = false)
     private int userScore;
 
+    @Size(min = 2,max = 8)
+    @Column(unique = true)
     private String userNick;
 
     @Override

@@ -64,3 +64,4 @@ INSERT INTO forum_question(id, ask_time, text, user_id) VALUES ('1',"Sat Jul 17 
 INSERT INTO quiz(id, name, score_to_complete) VALUES ('1','Start quiz', '3');
 INSERT INTO quiz(id, name, score_to_complete) VALUES ('2','Middle quiz', '3');
 INSERT INTO quiz(id, name, score_to_complete) VALUES ('3','Last quiz', '3');
+INSERT INTO user_liked_advices(user_id, liked_advices_id) VALUES ('1','3');

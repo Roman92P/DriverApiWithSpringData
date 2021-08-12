@@ -14,4 +14,6 @@ public interface TopicService {
     void removeTopicModel(Topic topic);
 
     Set<Topic> getAllTopic();
+
+    Optional<Topic> getTopicById(Long id);
 }

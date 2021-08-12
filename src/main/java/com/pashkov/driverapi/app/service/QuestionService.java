@@ -8,4 +8,5 @@ public interface QuestionService {
 
     Optional<Question> getQuestionByTopicName(String topicName);
 
+    Optional<Question> getQuestionById(long id);
 }
