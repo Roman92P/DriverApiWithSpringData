@@ -49,4 +49,14 @@ public class UserServiceImpl implements UserService{
     public Optional<User> getLikedAdvices(long id) {
         return userRepository.getUserByIdAndLikedAdvices(id);
     }
+
+    @Override
+    public Optional<User> getSharedAdvices(long id) {
+        return userRepository.getUserByIdAndSharedAdvices(id);
+    }
+
+    @Override
+    public Optional<User> getUserCompleteTrainings(long id) {
+        return userRepository.getUserByIdAndCompleteTrainings(id);
+    }
 }

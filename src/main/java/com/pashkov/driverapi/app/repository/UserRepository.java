@@ -17,4 +17,10 @@ public interface UserRepository extends CrudRepository<User, Long> {
     @Query("select u from User u join fetch u.likedAdvices a where u.id = :id")
     Optional<User>getUserByIdAndLikedAdvices(Long id);
 
+    @Query("select u from User u join fetch u.sharedAdvices a where u.id = :id")
+    Optional<User>getUserByIdAndSharedAdvices(Long id);
+
+    @Query("select u from User u join fetch u.completeTrainings a where u.id = :id")
+    Optional<User>getUserByIdAndCompleteTrainings(Long id);
+
 }

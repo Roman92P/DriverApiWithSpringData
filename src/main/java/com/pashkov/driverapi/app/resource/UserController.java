@@ -3,15 +3,14 @@ package com.pashkov.driverapi.app.resource;
 import com.pashkov.driverapi.app.model.*;
 import com.pashkov.driverapi.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
 
@@ -25,6 +24,9 @@ public class UserController {
 
     @Autowired
     private AdviceRepresentationModelAssembler adviceRepresentationModelAssembler;
+
+    @Autowired
+    private TrainingRepresentationModelAssembler trainingRepresentationModelAssembler;
 
     public UserController(UserService userService, UserRepresentationModelAssembler userRepresentationModelAssembler) {
         this.userService = userService;
@@ -46,21 +48,44 @@ public class UserController {
                         .toModel(byUserName), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/{id}/likedAdvices", produces = "application/json")
-    public ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(@PathVariable long id, Authentication authentication){
-        Optional<User> userByid = userService.findUserByid(id);
-        if(userByid.isEmpty()){
-            throw new ResourceNotFoundException();
-        }
+    @GetMapping(path = "/likedAdvices", produces = "application/json")
+    public ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(Authentication authentication){
         if(authentication==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        if(userService.findByUserName(authentication.getName()).getId() != id){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
-        System.out.println(authentication.getName());
-        User user = userService.getLikedAdvices(id).get();
+        User user = userService.getLikedAdvices(userService.findByUserName(authentication.getName()).getId()).get();
         Set<Advice> likedAdvices = user.getLikedAdvices();
         return new ResponseEntity<>(adviceRepresentationModelAssembler.toCollectionModel(likedAdvices), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/sharedAdvices", produces = "application/json")
+    public ResponseEntity<CollectionModel<AdviceModel>> getUserSharedAdvices(Authentication authentication){
+        if(authentication==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String name = authentication.getName();
+        Long id = userService.findByUserName(name).getId();
+        Optional<User> sharedAdvices = userService.getSharedAdvices(id);
+        if(sharedAdvices.isEmpty()){
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        Set<Advice> resultForSharedAdvices = sharedAdvices.get().getSharedAdvices();
+        return new ResponseEntity<>(adviceRepresentationModelAssembler.toCollectionModel(resultForSharedAdvices), HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/completedTrainings", produces = "application/json")
+    public ResponseEntity<CollectionModel<TrainingModel>> getUserCompleteTrainings(Authentication authentication){
+        if(authentication==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        String name = authentication.getName();
+        Long id = userService.findByUserName(name).getId();
+        Optional<User> completeTrainings = userService.getUserCompleteTrainings(id);
+        if(completeTrainings.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        Set<Training> resultForCompleteTrainings = completeTrainings.get().getCompleteTrainings();
+        return new ResponseEntity<>(trainingRepresentationModelAssembler.toCollectionModel(resultForCompleteTrainings), HttpStatus.OK);
+
     }
 }
