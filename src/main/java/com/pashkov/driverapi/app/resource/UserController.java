@@ -1,18 +1,22 @@
 package com.pashkov.driverapi.app.resource;
 
+import com.pashkov.driverapi.app.DTOs.AdviceForLikeDTO;
 import com.pashkov.driverapi.app.model.*;
+import com.pashkov.driverapi.app.service.AdviceService;
+import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.service.UserService;
+import com.pashkov.driverapi.app.util.TrainingUtil;
+import com.pashkov.driverapi.app.util.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-import java.util.Set;
+import javax.persistence.EntityNotFoundException;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -20,7 +24,14 @@ public class UserController {
 
     private final UserService userService;
 
+    private final AdviceService adviceService;
+
     private final UserRepresentationModelAssembler userRepresentationModelAssembler;
+
+    private final TrainingService trainingService;
+
+    @Autowired
+    TrainingUtil trainingUtil;
 
     @Autowired
     private AdviceRepresentationModelAssembler adviceRepresentationModelAssembler;
@@ -28,9 +39,11 @@ public class UserController {
     @Autowired
     private TrainingRepresentationModelAssembler trainingRepresentationModelAssembler;
 
-    public UserController(UserService userService, UserRepresentationModelAssembler userRepresentationModelAssembler) {
+    public UserController(UserService userService, AdviceService adviceService, UserRepresentationModelAssembler userRepresentationModelAssembler, TrainingService trainingService) {
         this.userService = userService;
+        this.adviceService = adviceService;
         this.userRepresentationModelAssembler = userRepresentationModelAssembler;
+        this.trainingService = trainingService;
     }
 
     @GetMapping(produces = "application/json")
@@ -87,5 +100,40 @@ public class UserController {
         Set<Training> resultForCompleteTrainings = completeTrainings.get().getCompleteTrainings();
         return new ResponseEntity<>(trainingRepresentationModelAssembler.toCollectionModel(resultForCompleteTrainings), HttpStatus.OK);
 
+    }
+
+    @GetMapping(path = "/uncompletedTraining", produces = "application/json")
+    public ResponseEntity<CollectionModel<AdviceModel>> getUserIncompletedAdvices(Authentication authentication) {
+        List<Advice> allAdvices = adviceService.getAll();
+        Set<Training> notCompletedTrainings = trainingUtil.findNotCompletedTrainings
+                (trainingService.completeUserTrainings(userService.findByUserName(authentication.getName()).getId()), trainingService.getAllTrainings());
+        Set<Advice> resultSet = new HashSet<>();
+        for ( Advice advice : allAdvices ) {
+            if (advice.getTraining() != null) {
+                if (notCompletedTrainings.stream().anyMatch(training -> training.getTrainingTitle()
+                        .equals(advice.getTraining().getTrainingTitle()))) {
+                    resultSet.add(advice);
+                }
+            }
+        }
+        return new ResponseEntity<>(
+                adviceRepresentationModelAssembler.toCollectionModel(resultSet), HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/likedAdvices", consumes = "application/json", produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void userLikeAdvice(Authentication authentication, @RequestBody AdviceForLikeDTO adviceForLikeDTO){
+        if(UserUtil.checkIfAuthenticated(authentication)){
+            Optional<Advice> adviceByTitle = adviceService.getAdviceByTitle(adviceForLikeDTO.getAdviceTitle());
+            if(adviceByTitle.isEmpty()){
+                throw new ResourceNotFoundException("Can't find advice by this title");
+            }
+            Optional<User> userOptional = userService.getLikedAdvices(userService.findByUserName(authentication.getName()).getId());
+            if(userOptional.isPresent()){
+                Set<Advice> likedAdvices = userOptional.get().getLikedAdvices();
+                likedAdvices.add(adviceByTitle.get());
+                userService.saveUser(userOptional.get());
+            }
+        }
     }
 }
