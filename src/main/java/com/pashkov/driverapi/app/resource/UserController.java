@@ -7,20 +7,27 @@ import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.service.UserService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import com.pashkov.driverapi.app.util.UserUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
+
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     private final UserService userService;
 
@@ -104,6 +111,9 @@ public class UserController {
 
     @GetMapping(path = "/uncompletedTraining", produces = "application/json")
     public ResponseEntity<CollectionModel<AdviceModel>> getUserIncompletedAdvices(Authentication authentication) {
+        if(authentication==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         List<Advice> allAdvices = adviceService.getAll();
         Set<Training> notCompletedTrainings = trainingUtil.findNotCompletedTrainings
                 (trainingService.completeUserTrainings(userService.findByUserName(authentication.getName()).getId()), trainingService.getAllTrainings());
@@ -135,5 +145,15 @@ public class UserController {
                 userService.saveUser(userOptional.get());
             }
         }
+    }
+
+    @PostMapping(path = "/sharedAdvices", consumes = "application/json", produces = "application/json")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void userShareAdvice(Authentication authentication, @RequestBody AdviceForLikeDTO adviceForShare)  {
+        if(authentication == null){
+            throw new AuthorizationServiceException("No found user");
+        }
+        Optional<User> user = userService.getSharedAdvices(userService.findByUserName(authentication.getName()).getId());
+        Optional<Advice> adviceByTitle = adviceService.getAdviceByTitle(adviceForShare.getAdviceTitle());
     }
 }
