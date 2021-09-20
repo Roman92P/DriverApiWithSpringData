@@ -18,6 +18,7 @@ import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -155,5 +156,28 @@ public class UserController {
         }
         Optional<User> user = userService.getSharedAdvices(userService.findByUserName(authentication.getName()).getId());
         Optional<Advice> adviceByTitle = adviceService.getAdviceByTitle(adviceForShare.getAdviceTitle());
+        if(adviceByTitle.isEmpty()){
+            throw  new EntityNotFoundException();
+        }
+        if(user.isEmpty()){
+            User byUserName = userService.findByUserName(authentication.getName());
+            Set<Advice> advicesSet = new HashSet<>();
+            advicesSet.add(adviceByTitle.get());
+            byUserName.setSharedAdvices(advicesSet);
+            userService.saveUser(byUserName);
+        }else{
+            User userWithAlreadySharedAdvices = user.get();
+            Set<Advice> sharedAdvices = userWithAlreadySharedAdvices.getSharedAdvices();
+            sharedAdvices.add(adviceByTitle.get());
+            userService.saveUser(userWithAlreadySharedAdvices);
+        }
+    }
+    @GetMapping(path = "/score")
+    public ResponseEntity<String> getUserScore(Authentication authentication){
+        if(authentication ==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User byUserName = userService.findByUserName(authentication.getName());
+        return new ResponseEntity<>(String.valueOf(byUserName.getUserScore()), HttpStatus.FOUND);
     }
 }
