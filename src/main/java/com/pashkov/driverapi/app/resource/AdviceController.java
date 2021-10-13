@@ -95,4 +95,8 @@ public class AdviceController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping(path = "/adviceWithTraining")
+    public ResponseEntity<AdviceModel> getadviceWithTraining(Authentication authentication){
+        return null;
+    }
 }

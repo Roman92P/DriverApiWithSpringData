@@ -9,8 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
-    @Bean
-    public AdviceConverter getAdviceConverter(){return new AdviceConverter();}
+//    @Bean
+//    public AdviceConverter getAdviceConverter(){return new AdviceConverter();}
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();

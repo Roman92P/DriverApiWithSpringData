@@ -28,8 +28,6 @@ public class RestAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuc
         this.secret = secret;
     }
 
-
-
     // authentication by session and cookie
 //    @Override
 //    public void onAuthenticationSuccess(HttpServletRequest request,

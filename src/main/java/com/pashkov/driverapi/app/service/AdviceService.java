@@ -15,4 +15,5 @@ public interface AdviceService {
     List<Advice> getAll();
 
     Optional<Advice> getAdviceByTitle(String adviceTitle);
+    
 }

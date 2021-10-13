@@ -7,6 +7,7 @@ import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.service.UserService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import com.pashkov.driverapi.app.util.UserUtil;
+import com.sun.istack.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class UserController {
 
     private final TrainingService trainingService;
 
+    private final RoleRepresentationModelAssembler roleRepresentationModelAssembler;
     @Autowired
     TrainingUtil trainingUtil;
 
@@ -47,11 +49,12 @@ public class UserController {
     @Autowired
     private TrainingRepresentationModelAssembler trainingRepresentationModelAssembler;
 
-    public UserController(UserService userService, AdviceService adviceService, UserRepresentationModelAssembler userRepresentationModelAssembler, TrainingService trainingService) {
+    public UserController(UserService userService, AdviceService adviceService, UserRepresentationModelAssembler userRepresentationModelAssembler, TrainingService trainingService, RoleRepresentationModelAssembler roleRepresentationModelAssembler) {
         this.userService = userService;
         this.adviceService = adviceService;
         this.userRepresentationModelAssembler = userRepresentationModelAssembler;
         this.trainingService = trainingService;
+        this.roleRepresentationModelAssembler = roleRepresentationModelAssembler;
     }
 
     @GetMapping(produces = "application/json")
@@ -179,5 +182,14 @@ public class UserController {
         }
         User byUserName = userService.findByUserName(authentication.getName());
         return new ResponseEntity<>(String.valueOf(byUserName.getUserScore()), HttpStatus.FOUND);
+    }
+
+    @GetMapping(path = "/role")
+    public ResponseEntity<CollectionModel<RoleModel>> getUserRole(Authentication authentication){
+        if(authentication ==null){
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        User byUserName = userService.findByUserName(authentication.getName());
+        return new ResponseEntity<>(roleRepresentationModelAssembler.toCollectionModel(byUserName.getRoles()),HttpStatus.OK);
     }
 }
