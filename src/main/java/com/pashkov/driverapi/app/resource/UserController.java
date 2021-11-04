@@ -58,7 +58,7 @@ public class UserController {
     }
 
     @GetMapping(produces = "application/json")
-    public ResponseEntity<?> getLoggedUserInfo(Authentication authentication) {
+    public ResponseEntity<UserModel> getLoggedUserInfo(Authentication authentication) {
         User byUserName = null;
         try {
             String name = authentication.getName();
