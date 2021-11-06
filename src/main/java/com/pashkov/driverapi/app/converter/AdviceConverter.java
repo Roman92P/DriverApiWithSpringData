@@ -12,6 +12,6 @@ public class AdviceConverter implements Converter<String, Advice> {
 
     @Override
     public Advice convert(String source) {
-        return adviceRepository.findById(Long.parseLong(source)).get();
+        return adviceRepository.findAdviceByAdviceTitle(source).get();
     }
 }
