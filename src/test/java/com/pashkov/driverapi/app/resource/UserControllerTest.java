@@ -10,7 +10,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.client.Traverson;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -31,10 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(value = TopicController.class, useDefaultFilters = false)
+@WebMvcTest(value = UserController.class, useDefaultFilters = false)
 class UserControllerTest {
-
-    private static Traverson traverson;
 
     @Autowired
     MockMvc mvc;
@@ -112,7 +108,7 @@ class UserControllerTest {
         );
 
         when(userController.getLoggedUserInfo(any())).thenReturn(userResponseEntity);
-        when(userController.getUserLikedAdvices(any())).thenReturn(userLikedAdvicesResponseEntity);
+        when(userController.getUserLikedAdvices()).thenReturn(userLikedAdvicesResponseEntity);
     }
 
     @Test
@@ -145,8 +141,6 @@ class UserControllerTest {
                 .andExpect(jsonPath(
                         "$._embedded.advices[0].adviceTitle", is("testAdviceTitle")))
                 .andExpect(jsonPath(
-                        "$._embedded.advices[0].topic.topicDescription", is("testTopicDescription")))
-
-        ;
+                        "$._embedded.advices[0].topic.topicDescription", is("testTopicDescription")));
     }
 }

@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app;
 
 import com.pashkov.driverapi.app.converter.AdviceConverter;
+import com.pashkov.driverapi.app.model.UserDetail;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,8 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class AppConfig implements WebMvcConfigurer {
-//    @Bean
-//    public AdviceConverter getAdviceConverter(){return new AdviceConverter();}
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();

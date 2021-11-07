@@ -1,6 +1,7 @@
 package com.pashkov.driverapi.app.resource;
 
 import com.pashkov.driverapi.app.DTOs.AdviceForLikeDTO;
+import com.pashkov.driverapi.app.config.IAuthenticationFacade;
 import com.pashkov.driverapi.app.model.*;
 import com.pashkov.driverapi.app.service.AdviceService;
 import com.pashkov.driverapi.app.service.TrainingService;
@@ -11,23 +12,33 @@ import com.sun.istack.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@RestController
+@BasePathAwareController
 @RequestMapping(value = "/users")
 public class UserController {
+
+    @Autowired
+    private IAuthenticationFacade authenticationFacade;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -40,6 +51,7 @@ public class UserController {
     private final TrainingService trainingService;
 
     private final RoleRepresentationModelAssembler roleRepresentationModelAssembler;
+
     @Autowired
     TrainingUtil trainingUtil;
 
@@ -72,8 +84,10 @@ public class UserController {
                         .toModel(byUserName), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/likedAdvices", produces = "application/json")
-    public ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(Authentication authentication){
+    @GetMapping(path = "/likedAdvices", produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(){
+        Authentication authentication = authenticationFacade.getAuthentication();
         if(authentication==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

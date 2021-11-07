@@ -8,6 +8,7 @@ import com.pashkov.driverapi.app.service.UserService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 
-@RestController
+@BasePathAwareController
 @RequestMapping(value = "/advices")
 public class AdviceController {
 

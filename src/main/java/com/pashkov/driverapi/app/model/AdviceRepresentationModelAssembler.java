@@ -31,7 +31,7 @@ public class AdviceRepresentationModelAssembler extends RepresentationModelAssem
         adviceModel.add(linkTo(
                 methodOn(AdviceController.class)
                         .getAdviceWithTitle(entity.getAdviceTitle()))
-                .withSelfRel());
+                .withRel("adviceForJUnit"));
         adviceModel.setAdviceTitle(entity.getAdviceTitle());
         adviceModel.setContent(entity.getContent());
         adviceModel.setLikes(entity.getLikesCount());
