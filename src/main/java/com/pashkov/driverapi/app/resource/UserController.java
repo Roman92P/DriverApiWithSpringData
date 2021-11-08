@@ -8,7 +8,6 @@ import com.pashkov.driverapi.app.service.TrainingService;
 import com.pashkov.driverapi.app.service.UserService;
 import com.pashkov.driverapi.app.util.TrainingUtil;
 import com.pashkov.driverapi.app.util.UserUtil;
-import com.sun.istack.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +18,16 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AuthorizationServiceException;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import javax.persistence.EntityNotFoundException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-@BasePathAwareController
+@RestController
 @RequestMapping(value = "/users")
 public class UserController {
 
@@ -69,7 +63,8 @@ public class UserController {
         this.roleRepresentationModelAssembler = roleRepresentationModelAssembler;
     }
 
-    @GetMapping(produces = "application/json")
+    @GetMapping(produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseBody
     public ResponseEntity<UserModel> getLoggedUserInfo(Authentication authentication) {
         User byUserName = null;
         try {
@@ -85,14 +80,16 @@ public class UserController {
     }
 
     @GetMapping(path = "/likedAdvices", produces = MediaTypes.HAL_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(){
+    public @ResponseBody ResponseEntity<CollectionModel<AdviceModel>> getUserLikedAdvices(){
         Authentication authentication = authenticationFacade.getAuthentication();
         if(authentication==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        User user = userService.getLikedAdvices(userService.findByUserName(authentication.getName()).getId()).get();
-        Set<Advice> likedAdvices = user.getLikedAdvices();
+        Optional<User> userOptional = userService.getLikedAdvices(userService.findByUserName(authentication.getName()).getId());
+        if(userOptional.isEmpty()){
+            throw  new ResourceNotFoundException();
+        }
+        Set<Advice> likedAdvices = userOptional.get().getLikedAdvices();
         return new ResponseEntity<>(adviceRepresentationModelAssembler.toCollectionModel(likedAdvices), HttpStatus.OK);
     }
 
@@ -111,7 +108,7 @@ public class UserController {
         return new ResponseEntity<>(adviceRepresentationModelAssembler.toCollectionModel(resultForSharedAdvices), HttpStatus.OK);
     }
 
-    @GetMapping(path = "/completedTrainings", produces = "application/json")
+    @GetMapping(path = "/completedTrainings", produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<TrainingModel>> getUserCompleteTrainings(Authentication authentication){
         if(authentication==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -124,7 +121,6 @@ public class UserController {
         }
         Set<Training> resultForCompleteTrainings = completeTrainings.get().getCompleteTrainings();
         return new ResponseEntity<>(trainingRepresentationModelAssembler.toCollectionModel(resultForCompleteTrainings), HttpStatus.OK);
-
     }
 
     @GetMapping(path = "/uncompletedTraining", produces = "application/json")
@@ -148,7 +144,7 @@ public class UserController {
                 adviceRepresentationModelAssembler.toCollectionModel(resultSet), HttpStatus.OK);
     }
 
-    @PostMapping(path = "/likedAdvices", consumes = "application/json", produces = "application/json")
+    @PostMapping(path = "/likedAdvices", consumes = "application/json", produces = MediaTypes.HAL_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public void userLikeAdvice(Authentication authentication, @RequestBody AdviceForLikeDTO adviceForLikeDTO){
         if(UserUtil.checkIfAuthenticated(authentication)){
@@ -189,7 +185,8 @@ public class UserController {
             userService.saveUser(userWithAlreadySharedAdvices);
         }
     }
-    @GetMapping(path = "/score")
+    @GetMapping(path = "/score", produces = MediaTypes.HAL_JSON_VALUE)
+    @ResponseBody
     public ResponseEntity<String> getUserScore(Authentication authentication){
         if(authentication ==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
