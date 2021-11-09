@@ -1,11 +1,9 @@
 package com.pashkov.driverapi.app.resource;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.mysql.cj.util.TestUtils;
 import com.pashkov.driverapi.app.DTOs.AdviceForLikeDTO;
 import com.pashkov.driverapi.app.model.UserDetail;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,30 +15,25 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
-import org.springframework.mock.http.client.MockClientHttpRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.Set;
 
-import static org.hamcrest.Matchers.is;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.hamcrest.Matchers.is;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class UserControllerAcceptanceTest {
-
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
-
 
     @Autowired
     UserDetail userDetail;
@@ -170,11 +163,19 @@ class UserControllerAcceptanceTest {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/score");
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.status().isFound());
     }
-    
+
     @Test
     @WithUserDetails("Roman")
     public void shouldReturnCorrectContentType() throws Exception {
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/score");
         mvc.perform(requestBuilder).andExpect(MockMvcResultMatchers.content().contentType(MediaTypes.HAL_JSON_VALUE));
+    }
+
+    @Test@WithUserDetails("Roman")
+    public void shouldReturnResponseWithUserRoleWithCorrectMediaType() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/users/role");
+        mvc.perform(requestBuilder)
+                .andExpect(MockMvcResultMatchers.status().isFound())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaTypes.HAL_JSON_VALUE));
     }
 }

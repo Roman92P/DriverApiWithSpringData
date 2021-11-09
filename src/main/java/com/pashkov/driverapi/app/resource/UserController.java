@@ -11,7 +11,6 @@ import com.pashkov.driverapi.app.util.UserUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.BasePathAwareController;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.MediaTypes;
@@ -195,12 +194,12 @@ public class UserController {
         return new ResponseEntity<>(String.valueOf(byUserName.getUserScore()), HttpStatus.FOUND);
     }
 
-    @GetMapping(path = "/role")
+    @GetMapping(path = "/role", produces = MediaTypes.HAL_JSON_VALUE)
     public ResponseEntity<CollectionModel<RoleModel>> getUserRole(Authentication authentication){
         if(authentication ==null){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         User byUserName = userService.findByUserName(authentication.getName());
-        return new ResponseEntity<>(roleRepresentationModelAssembler.toCollectionModel(byUserName.getRoles()),HttpStatus.OK);
+        return new ResponseEntity<>(roleRepresentationModelAssembler.toCollectionModel(byUserName.getRoles()),HttpStatus.FOUND);
     }
 }

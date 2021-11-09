@@ -17,6 +17,12 @@
         <java.version>11</java.version>
     </properties>
     <dependencies>
+<!--        h2 db for testing-->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!--Jackson object mapper		-->
 <!--        <dependency>-->
 <!--            <groupId>com.fasterxml.jackson.core</groupId>-->
@@ -130,10 +136,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
         </dependency>
     </dependencies>
 
