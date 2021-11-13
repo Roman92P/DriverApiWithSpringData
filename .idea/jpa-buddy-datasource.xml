@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JpbDataSourceConfig">
+    <data-sources>
+      <data-source id="c48ad8cc-9b2f-4a9e-9cf7-737ea4f3c802" name="driver-api" url="jdbc:mysql://localhost/driver?useSSL=false&amp;allowMultiQueries=true&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true" driverClass="com.mysql.cj.jdbc.Driver" />
+    </data-sources>
+  </component>
+</project>
