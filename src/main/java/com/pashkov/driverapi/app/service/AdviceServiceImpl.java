@@ -2,6 +2,7 @@ package com.pashkov.driverapi.app.service;
 
 import com.pashkov.driverapi.app.model.Advice;
 import com.pashkov.driverapi.app.repository.AdviceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
