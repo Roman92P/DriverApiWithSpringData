@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 @Entity
+@Table(name = "driverUser")
 public class User implements Serializable {
 
     @Id
@@ -20,17 +21,23 @@ public class User implements Serializable {
     private boolean enabled;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "driver_user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     @ManyToMany
+    @JoinTable(name = "user_liked_advices", joinColumns = @JoinColumn(name = "driver_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "liked_advices_id"))
     private Set<Advice> likedAdvices;
 
     @ManyToMany
+    @JoinTable(name = "user_shared_advices", joinColumns = @JoinColumn(name = "driver_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "shared_advices_id"))
     private Set<Advice> sharedAdvices;
 
     @ManyToMany
+    @JoinTable(name = "user_complete_trainings", joinColumns = @JoinColumn(name = "driver_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "complete_trainings_id"))
     private Set<Training> completeTrainings;
 
     @Column(nullable = false)
