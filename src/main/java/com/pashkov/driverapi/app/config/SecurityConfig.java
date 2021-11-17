@@ -55,7 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/swagger-ui/**",
                         "/login").permitAll()
                 //for testing during develop porcess permitAll
-                //.anyRequest().permitAll()
+                //anyRequest().permitAll()
                 .anyRequest().authenticated()
                 .and()
                 //make session stateless
