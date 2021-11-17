@@ -61,7 +61,7 @@ class UserControllerAcceptanceTest {
     }
 
     @Test
-    @WithUserDetails("RomanDwa")
+    @WithUserDetails("RomanTrzy")
     public void shouldThrowNotFoundResourceIfUserDontHaveLikedAdvices() throws Exception {
         MockHttpServletRequestBuilder request
                 = MockMvcRequestBuilders.get("/users/likedAdvices");
