@@ -10,17 +10,17 @@ pipeline {
         stage('Build') {
             steps {
                 // Run Maven on a Unix agent.
-                sh "mvn clean compile"
+                bat "mvn clean compile"
             }
         }
         stage('Test'){
             steps{
-                sh "mvn test"
+                bat "mvn test"
             }
         }
         stage('Deploy'){
             steps{
-                 sh "mvn clean heroku:deploy"
+                 bat "mvn clean heroku:deploy"
             }
         }
     }
