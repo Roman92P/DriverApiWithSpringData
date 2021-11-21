@@ -20,8 +20,7 @@ public class Advice implements Serializable {
 
     private String adviceTitle;
 
-    @Lob
-    @Column(length=1000)
+    @Column(columnDefinition = "TEXT")
     @ApiModelProperty(notes = "Driver advice content")
     private String content;
 
